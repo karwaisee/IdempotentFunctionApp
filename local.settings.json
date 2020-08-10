@@ -1,0 +1,8 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "evhConnStr": "Endpoint=sb://myevhinspace.servicebus.windows.net/;SharedAccessKeyName=ListenOnly;SharedAccessKey=pgtikikx10f8k9cunwbttxb2dn0e7a23l41qthorggp="
+  }
+}
