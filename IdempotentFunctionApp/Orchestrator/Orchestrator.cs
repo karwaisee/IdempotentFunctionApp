@@ -36,7 +36,7 @@ namespace IdempotentFunctionApp
             await cache
                 .SetAsync(eventId, Encoding.UTF8.GetBytes(cacheValue), cacheEntryOptions)
                 .ConfigureAwait(false);
-            string messageBody = Encoding.UTF8.GetString(eventData.Body.Array, eventData.Body.Offset, eventData.Body.Count);
+            string messageBody = Encoding.UTF8.GetString(eventData.Body.Array);
 
             // TODO: Add your processing logic.
 
