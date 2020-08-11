@@ -25,30 +25,38 @@ public override void Configure(IFunctionsHostBuilder builder)
 public async Task ProcessEventAsync(EventData eventData)
 {
     string eventId = $"{eventData.SystemProperties.PartitionKey}_{eventData.SystemProperties.Offset}";
-
     ...
 }
 ```
 
 3. Use IDistributedCache (Redis) to check if unique ID exists, if exists, then do not proceed further
 ```C#
-IDistributedCache cache;
-var cacheResult = await cache.GetAsync(eventId).ConfigureAwait(false);
-if (cacheResult != null)
+public async Task ProcessEventAsync(EventData eventData)
 {
-    log.LogInformation($"Skipped previously processed event {eventId}");
-    return;
+    ...
+    IDistributedCache cache;
+    var cacheResult = await cache.GetAsync(eventId).ConfigureAwait(false);
+    if (cacheResult != null)
+    {
+        log.LogInformation($"Skipped previously processed event {eventId}");
+        return;
+    }
+    ...
 }
 ```
 4. If unique ID does not exists, then mark the unique ID in IDistributedCache and process the event
 ```C#
-var cacheValue = DateTime.UtcNow.ToBinary().ToString();
-await cache
-    .SetAsync(eventId, Encoding.UTF8.GetBytes(cacheValue), cacheEntryOptions)
-    .ConfigureAwait(false);
-string messageBody = Encoding.UTF8.GetString(eventData.Body.Array);
+public async Task ProcessEventAsync(EventData eventData)
+{
+    ...
+    var cacheValue = DateTime.UtcNow.ToBinary().ToString();
+    await cache
+        .SetAsync(eventId, Encoding.UTF8.GetBytes(cacheValue), cacheEntryOptions)
+        .ConfigureAwait(false);
+    string messageBody = Encoding.UTF8.GetString(eventData.Body.Array);
 
-// TODO: Add your processing logic.
+    // TODO: Add your processing logic.
 
-log.LogInformation($"Processed event {eventId}: {messageBody}");
+    log.LogInformation($"Processed event {eventId}: {messageBody}");
+}
 ```
